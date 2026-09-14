@@ -1,94 +1,63 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Generatore statico per il sito "Museo della Dogana di Messina".
-Crea tutte le pagine HTML a partire da template comuni, con testo
-segnaposto in latino (lorem ipsum) da sostituire con i contenuti reali.
-Pensato per essere sincronizzato/importato in Publii o pubblicato
-direttamente su GitHub Pages.
+Generatore del sito "Museo della Dogana di Messina" — versione con
+pannello di amministrazione (Decap CMS) per la modifica WYSIWYG dei
+contenuti dopo la pubblicazione, pensata per hosting su Netlify
+(gratuito, senza pubblicità, pagine pubbliche senza login).
+
+Architettura:
+- Le pagine .html sono "gusci" statici fissi (struttura, menu, QR,
+  breadcrumb, navigazione tra oggetti): li genera questo script e
+  normalmente NON si toccano più.
+- I testi effettivi (titoli, descrizioni, immagini) vivono in file
+  .json dentro /content/, che è esattamente ciò che Decap CMS
+  modifica tramite il pannello /admin con un editor a campi/WYSIWYG.
+- Un piccolo script (js/render.js) legge il file .json della pagina
+  e lo inserisce nel punto giusto dello scheletro HTML.
 """
+import json
 import os
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
-LOREM = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-         "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
-         "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris "
-         "nisi ut aliquip ex ea commodo consequat.")
-
+LOREM = ("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do "
+         "eiusmod tempor incididunt ut labore et dolore magna aliqua.")
 LOREM_BREVE = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
-# ---------------------------------------------------------------------------
-# Definizione delle sezioni espositive (modulare: aggiungere una voce qui
-# e rilanciare lo script per creare una nuova sezione, es. "sequestri").
-# ---------------------------------------------------------------------------
 SEZIONI = [
-    {
-        "slug": "sigilli",
-        "titolo": "Sigilli doganali",
-        "sottotitolo": "Piombi, sigilli, lucchetti e laminette",
-        "n_item": 6,
-        "prefisso_item": "Sigillo",
-    },
-    {
-        "slug": "strumenti",
-        "titolo": "Strumenti di accertamento",
-        "sottotitolo": "Alcolometri, densimetri, bicchieri di campionamento",
-        "n_item": 5,
-        "prefisso_item": "Strumento",
-    },
-    {
-        "slug": "contrassegni",
-        "titolo": "Contrassegni di Stato",
-        "sottotitolo": "Contrassegni e bolli di Stato",
-        "n_item": 3,
-        "prefisso_item": "Contrassegno",
-    },
-    {
-        "slug": "campioni",
-        "titolo": "Campioni di merce",
-        "sottotitolo": "Lattine di gasolio, alcol e prodotti vari",
-        "n_item": 3,
-        "prefisso_item": "Campione",
-    },
-    {
-        "slug": "registri",
-        "titolo": "Registri e stampati doganali",
-        "sottotitolo": "Registri, bollettari e modulistica storica",
-        "n_item": 2,
-        "prefisso_item": "Registro",
-    },
-    {
-        "slug": "sicurezza",
-        "titolo": "Attrezzature di sicurezza",
-        "sottotitolo": "Maschere antigas e dotazioni di protezione",
-        "n_item": 1,
-        "prefisso_item": "Attrezzatura",
-    },
+    {"slug": "sigilli", "titolo": "Sigilli doganali",
+     "sottotitolo": "Piombi, sigilli, lucchetti e laminette",
+     "n_item": 6, "prefisso_item": "Sigillo"},
+    {"slug": "strumenti", "titolo": "Strumenti di accertamento",
+     "sottotitolo": "Alcolometri, densimetri, bicchieri di campionamento",
+     "n_item": 5, "prefisso_item": "Strumento"},
+    {"slug": "contrassegni", "titolo": "Contrassegni di Stato",
+     "sottotitolo": "Contrassegni e bolli di Stato",
+     "n_item": 3, "prefisso_item": "Contrassegno"},
+    {"slug": "campioni", "titolo": "Campioni di merce",
+     "sottotitolo": "Lattine di gasolio, alcol e prodotti vari",
+     "n_item": 3, "prefisso_item": "Campione"},
+    {"slug": "registri", "titolo": "Registri e stampati doganali",
+     "sottotitolo": "Registri, bollettari e modulistica storica",
+     "n_item": 2, "prefisso_item": "Registro"},
+    {"slug": "sicurezza", "titolo": "Attrezzature di sicurezza",
+     "sottotitolo": "Maschere antigas e dotazioni di protezione",
+     "n_item": 1, "prefisso_item": "Attrezzatura"},
 ]
 
-# Pagine di storia (semplici, senza sotto-item)
 PAGINE_STORIA = [
-    {
-        "slug": "storia-fabbricato",
-        "titolo": "Storia del fabbricato",
-        "sottotitolo": "La sede storica della Dogana di Messina",
-    },
-    {
-        "slug": "storia-dogana",
-        "titolo": "Storia della Dogana",
-        "sottotitolo": "Le origini e l'evoluzione dell'ufficio doganale",
-    },
+    {"slug": "storia-fabbricato", "titolo": "Storia del fabbricato"},
+    {"slug": "storia-dogana", "titolo": "Storia della Dogana"},
 ]
 
-SITE_TITLE = "Museo della Dogana di Messina"
+SITE_TITLE = "Le vie dei tesori - La Dogana di Messina"
 SITE_SUB = "Agenzia delle Dogane e dei Monopoli"
 
-# ---------------------------------------------------------------------------
-# Frammenti HTML comuni
-# ---------------------------------------------------------------------------
-
-HEAD_EXTRA = """<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>"""
+HEAD_LIBS = (
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>\n'
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>'
+)
 
 QR_SCRIPT = """
 <script>
@@ -97,18 +66,16 @@ QR_SCRIPT = """
     if(!el || typeof QRCode === 'undefined') return;
     new QRCode(el, {
       text: window.location.href,
-      width: 120,
-      height: 120,
-      colorDark: "#12213a",
-      colorLight: "#ffffff",
+      width: 120, height: 120,
+      colorDark: "#12213a", colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.M
     });
   })();
 </script>
 """
 
+
 def nav_html(depth, active_slug=""):
-    """depth = numero di livelli di risalita ('' , '../', '../../')"""
     r = depth
 
     def cls(slug):
@@ -119,21 +86,19 @@ def nav_html(depth, active_slug=""):
         ("storia-fabbricato", f"{r}pages/storia-fabbricato.html", "Storia del fabbricato"),
         ("storia-dogana", f"{r}pages/storia-dogana.html", "Storia della Dogana"),
     ]
-    li = []
-    for slug, href, label in items:
-        li.append(f'<li><a href="{href}"{cls(slug)}>{label}</a></li>')
-
+    li = [f'<li><a href="{href}"{cls(s)}>{label}</a></li>' for s, href, label in items]
     li.append('<li><a href="#" class="sotto" style="pointer-events:none;color:#c99a5c;">Esposizioni</a></li>')
     for s in SEZIONI:
         href = f"{r}esposizioni/{s['slug']}/index.html"
         li.append(f'<li class="sotto"><a href="{href}"{cls(s["slug"])}>{s["titolo"]}</a></li>')
-
     return "\n      ".join(li)
 
 
-def base_page(title, breadcrumb, active_slug, depth, content, extra_head=""):
+def base_page(title, breadcrumb, active_slug, depth, body_inner, page_type, content_url, extra_js_vars=""):
     css = f"{depth}css/style.css"
     home = f"{depth}index.html"
+    render_js = f"{depth}js/render.js"
+    main_js = f"{depth}js/main.js"
     return f"""<!DOCTYPE html>
 <html lang="it">
 <head>
@@ -142,7 +107,7 @@ def base_page(title, breadcrumb, active_slug, depth, content, extra_head=""):
 <title>{title} — {SITE_TITLE}</title>
 <meta name="description" content="{SITE_TITLE}: esposizione di strumenti e attrezzature tecniche.">
 <link rel="stylesheet" href="{css}">
-{extra_head}
+{HEAD_LIBS}
 </head>
 <body>
 
@@ -168,28 +133,29 @@ def base_page(title, breadcrumb, active_slug, depth, content, extra_head=""):
 
 <main>
   {breadcrumb}
-  {content}
+  {body_inner}
 </main>
 
 <footer class="site-footer">
   <p>{SITE_TITLE} — {SITE_SUB}</p>
-  <p>Contenuti in fase di redazione. Struttura del sito generata automaticamente.</p>
+  <p>Contenuti gestiti tramite pannello di amministrazione.</p>
 </footer>
 
-<script src="{depth}js/main.js"></script>
+<script>
+  var PAGE_TYPE = "{page_type}";
+  var CONTENT_URL = "{content_url}";
+  {extra_js_vars}
+</script>
+<script src="{main_js}"></script>
+<script src="{render_js}"></script>
+{QR_SCRIPT}
 </body>
 </html>
 """
 
 
 def breadcrumb_html(depth, parts):
-    """parts: lista di tuple (etichetta, href|None)"""
-    bits = []
-    for label, href in parts:
-        if href:
-            bits.append(f'<a href="{href}">{label}</a>')
-        else:
-            bits.append(label)
+    bits = [f'<a href="{href}">{label}</a>' if href else label for label, href in parts]
     return f'<p class="breadcrumb">{" &rsaquo; ".join(bits)}</p>'
 
 
@@ -201,8 +167,16 @@ def write(path, content):
     print("creato:", path)
 
 
+def write_json(path, data):
+    full = os.path.join(ROOT, path)
+    os.makedirs(os.path.dirname(full), exist_ok=True)
+    with open(full, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    print("creato:", path)
+
+
 # ---------------------------------------------------------------------------
-# 1) main.js
+# js/main.js (menu mobile) e js/render.js (rendering contenuti dinamici)
 # ---------------------------------------------------------------------------
 write("js/main.js", """
 document.addEventListener('DOMContentLoaded', function () {
@@ -216,30 +190,80 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 """)
 
+write("js/render.js", """
+/* Legge il file JSON di contenuto della pagina (gestito da Decap CMS
+   nel pannello /admin) e lo inserisce nello scheletro HTML statico. */
+
+function md(testo){
+  if(!testo) return '';
+  if(typeof marked !== 'undefined') return marked.parse(testo);
+  return '<p>' + testo + '</p>';
+}
+
+function immagineHtml(src, alt){
+  if(src){
+    return '<img src="' + src + '" alt="' + (alt || '') + '" style="width:100%;border:1px solid var(--linea);border-radius:2px;margin-bottom:1rem;">';
+  }
+  return '<div class="placeholder-img">Nessuna immagine caricata</div>';
+}
+
+var TEMPLATES = {
+  home: function(d){
+    return '<p class="eyebrow">Esposizione permanente</p>' +
+           '<h1>' + (d.title || '') + '</h1>' +
+           md(d.intro);
+  },
+  page: function(d){
+    return '<p class="eyebrow">Storia</p>' +
+           '<h1>' + (d.title || '') + '</h1>' +
+           immagineHtml(d.image, d.title) +
+           md(d.body);
+  },
+  section: function(d){
+    return '<p class="eyebrow">Esposizione</p>' +
+           '<h1>' + (d.title || '') + '</h1>' +
+           md(d.intro);
+  },
+  item: function(d){
+    var html = '<h1>' + (d.title || '') + '</h1>' + immagineHtml(d.image, d.title) + md(d.description);
+    html += '<dl class="campi-scheda">';
+    html += '<dt>Provenienza / periodo</dt><dd>' + (d.provenienza || '&nbsp;') + '</dd>';
+    html += '<dt>Note tecniche</dt><dd>' + md(d.note) + '</dd>';
+    html += '</dl>';
+    return html;
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function(){
+  if (typeof PAGE_TYPE === 'undefined' || typeof CONTENT_URL === 'undefined') return;
+  var target = document.getElementById('dyn-' + PAGE_TYPE);
+  if(!target) return;
+  fetch(CONTENT_URL)
+    .then(function(r){ if(!r.ok) throw new Error('non trovato'); return r.json(); })
+    .then(function(data){ target.innerHTML = TEMPLATES[PAGE_TYPE](data); })
+    .catch(function(){ target.innerHTML = '<p class="provvisorio">Contenuto non ancora disponibile.</p>'; });
+});
+""")
+
 # ---------------------------------------------------------------------------
-# 2) Home page
+# Home
 # ---------------------------------------------------------------------------
-schede = []
-for s in SEZIONI:
-    schede.append(f"""
-    <div class="scheda">
-      <a class="titolo-scheda" href="esposizioni/{s['slug']}/index.html">{s['titolo']}</a>
-      <p class="desc">{s['sottotitolo']}</p>
-      <span class="conteggio">{s['n_item']} oggetti in esposizione</span>
-    </div>""")
+write_json("content/home.json", {"title": SITE_TITLE, "intro": LOREM})
 
 schede_storia = "\n".join(f"""
     <div class="scheda">
       <a class="titolo-scheda" href="pages/{p['slug']}.html">{p['titolo']}</a>
-      <p class="desc">{p['sottotitolo']}</p>
     </div>""" for p in PAGINE_STORIA)
 
-home_content = f"""
-  <section class="hero">
-    <p class="eyebrow">Esposizione permanente</p>
-    <h1>{SITE_TITLE}</h1>
-    <p class="provvisorio">{LOREM}</p>
-  </section>
+schede_sezioni = "\n".join(f"""
+    <div class="scheda">
+      <a class="titolo-scheda" href="esposizioni/{s['slug']}/index.html">{s['titolo']}</a>
+      <p class="desc">{s['sottotitolo']}</p>
+      <span class="conteggio">{s['n_item']} oggetti in esposizione</span>
+    </div>""" for s in SEZIONI)
+
+home_body = f"""
+  <section class="hero" id="dyn-home"></section>
 
   <section>
     <h2>Storia</h2>
@@ -251,285 +275,100 @@ home_content = f"""
   <section style="margin-top:2rem;">
     <h2>Esposizioni</h2>
     <p class="desc" style="color:var(--testo-tenue);font-size:.88rem;margin-bottom:.4rem;">
-      Ogni sezione è accessibile direttamente tramite il codice QR affisso
-      presso la relativa vetrina, oppure dal menu di navigazione.
+      Ogni sezione è accessibile anche tramite il codice QR affisso presso la relativa vetrina.
     </p>
     <div class="griglia-sezioni">
-      {"".join(schede)}
+      {schede_sezioni}
     </div>
   </section>
 
   <div class="blocco-qr">
     <div class="qr-riquadro" id="qr-pagina"></div>
-    <div class="qr-testo">
-      <strong>QR di questa pagina</strong>
-      Inquadra per riaprire la pagina principale da smartphone.
-    </div>
+    <div class="qr-testo"><strong>QR di questa pagina</strong>Inquadra per riaprire la pagina principale.</div>
   </div>
 """
 write("index.html", base_page(
-    title="Pagina principale",
-    breadcrumb="",
-    active_slug="home",
-    depth="",
-    content=home_content,
-    extra_head=HEAD_EXTRA,
-) + QR_SCRIPT.replace("</body>", "").replace("</html>", ""))
-
-# nota: aggiungo lo script QR subito prima della chiusura del body
-def inject_qr(html):
-    return html.replace("</body>", QR_SCRIPT + "</body>")
-
-# ricreo la home correttamente (metodo pulito, sovrascrivo)
-home_html = base_page(
-    title="Pagina principale",
-    breadcrumb="",
-    active_slug="home",
-    depth="",
-    content=home_content,
-    extra_head=HEAD_EXTRA,
-)
-write("index.html", inject_qr(home_html))
+    title="Pagina principale", breadcrumb="", active_slug="home", depth="",
+    body_inner=home_body, page_type="home", content_url="content/home.json",
+))
 
 # ---------------------------------------------------------------------------
-# 3) Pagine di storia
+# Pagine di storia
 # ---------------------------------------------------------------------------
 for p in PAGINE_STORIA:
-    content = f"""
+    write_json(f"content/pages/{p['slug']}.json", {"title": p['titolo'], "image": "", "body": LOREM})
+    body = f"""
   <a class="link-indietro" href="../index.html">&larr; Torna alla pagina principale</a>
-  <section class="hero">
-    <p class="eyebrow">Storia</p>
-    <h1>{p['titolo']}</h1>
-    <p class="provvisorio">{LOREM}</p>
-  </section>
-
-  <div class="placeholder-img">Immagine segnaposto — {p['titolo']}</div>
-
-  <p class="provvisorio">{LOREM}</p>
-  <p class="provvisorio">{LOREM_BREVE}</p>
-
+  <section class="hero" id="dyn-page"></section>
   <div class="blocco-qr">
     <div class="qr-riquadro" id="qr-pagina"></div>
-    <div class="qr-testo">
-      <strong>QR di questa pagina</strong>
-      Da stampare ed esporre presso il relativo pannello informativo.
-    </div>
+    <div class="qr-testo"><strong>QR di questa pagina</strong>Da stampare per il pannello informativo.</div>
   </div>
 """
     bc = breadcrumb_html("../", [("Home", "../index.html"), (p['titolo'], None)])
-    html = base_page(
-        title=p['titolo'],
-        breadcrumb=bc,
-        active_slug=p['slug'],
-        depth="../",
-        content=content,
-        extra_head=HEAD_EXTRA,
-    )
-    write(f"pages/{p['slug']}.html", inject_qr(html))
+    write(f"pages/{p['slug']}.html", base_page(
+        title=p['titolo'], breadcrumb=bc, active_slug=p['slug'], depth="../",
+        body_inner=body, page_type="page", content_url=f"../content/pages/{p['slug']}.json",
+    ))
 
 # ---------------------------------------------------------------------------
-# 4) Sezioni espositive: pagina generale + schede oggetto
+# Sezioni espositive
 # ---------------------------------------------------------------------------
 for s in SEZIONI:
-    slug = s['slug']
-    n = s['n_item']
+    slug = s['slug']; n = s['n_item']
+    write_json(f"content/esposizioni/{slug}/index.json", {"title": s['titolo'], "intro": LOREM})
 
-    # ---- indice della sezione (pagina generale) ----
-    voci = []
-    for i in range(1, n + 1):
-        num = f"{i:02d}"
-        voci.append(f"""
+    voci = "\n".join(f"""
       <li>
-        <span class="num">{s['prefisso_item']} {num}</span>
-        <a href="item-{num}.html">{s['prefisso_item']} {num} — <span class="provvisorio-inline">titolo da definire</span></a>
-      </li>""")
+        <span class="num">{s['prefisso_item']} {i:02d}</span>
+        <a href="item-{i:02d}.html">{s['prefisso_item']} {i:02d}</a>
+      </li>""" for i in range(1, n + 1))
 
-    content = f"""
+    body = f"""
   <a class="link-indietro" href="../../index.html">&larr; Torna alla pagina principale</a>
-  <section class="hero">
-    <p class="eyebrow">Esposizione</p>
-    <h1>{s['titolo']}</h1>
-    <p class="provvisorio">{LOREM}</p>
-  </section>
-
-  <p class="provvisorio">{LOREM}</p>
-
+  <section class="hero" id="dyn-section"></section>
   <h2>Oggetti in esposizione ({n})</h2>
-  <ul class="elenco-item">
-    {"".join(voci)}
-  </ul>
-
+  <ul class="elenco-item">{voci}</ul>
   <div class="blocco-qr">
     <div class="qr-riquadro" id="qr-pagina"></div>
-    <div class="qr-testo">
-      <strong>QR di questa pagina</strong>
-      Inquadra per accedere alla panoramica della sezione "{s['titolo']}".
-    </div>
+    <div class="qr-testo"><strong>QR di questa pagina</strong>Panoramica della sezione "{s['titolo']}".</div>
   </div>
 """
     bc = breadcrumb_html("../../", [("Home", "../../index.html"), (s['titolo'], None)])
-    html = base_page(
-        title=s['titolo'],
-        breadcrumb=bc,
-        active_slug=slug,
-        depth="../../",
-        content=content,
-        extra_head=HEAD_EXTRA,
-    )
-    write(f"esposizioni/{slug}/index.html", inject_qr(html))
+    write(f"esposizioni/{slug}/index.html", base_page(
+        title=s['titolo'], breadcrumb=bc, active_slug=slug, depth="../../",
+        body_inner=body, page_type="section",
+        content_url=f"../../content/esposizioni/{slug}/index.json",
+    ))
 
-    # ---- schede singolo oggetto ----
     for i in range(1, n + 1):
         num = f"{i:02d}"
+        write_json(f"content/esposizioni/{slug}/item-{num}.json", {
+            "title": f"{s['prefisso_item']} {num} — titolo da definire",
+            "image": "", "description": LOREM_BREVE, "provenienza": LOREM_BREVE, "note": LOREM_BREVE,
+        })
         prev_href = f"item-{i-1:02d}.html" if i > 1 else None
         next_href = f"item-{i+1:02d}.html" if i < n else None
-
         nav_prev = f'<a href="{prev_href}">&larr; Oggetto precedente</a>' if prev_href else '<span class="disabilitato">&larr; Oggetto precedente</span>'
         nav_next = f'<a href="{next_href}">Oggetto successivo &rarr;</a>' if next_href else '<span class="disabilitato">Oggetto successivo &rarr;</span>'
 
-        content = f"""
+        body = f"""
   <a class="link-indietro" href="index.html">&larr; Torna a "{s['titolo']}"</a>
   <article class="scheda-oggetto">
     <p class="etichetta">{s['titolo']} — scheda {num} di {n:02d}</p>
-    <h1>{s['prefisso_item']} {num} — <span class="provvisorio-inline">titolo da definire</span></h1>
-
-    <div class="placeholder-img">Immagine segnaposto — {s['prefisso_item']} {num}</div>
-
-    <p class="provvisorio">{LOREM}</p>
-
-    <dl class="campi-scheda">
-      <dt>Descrizione</dt>
-      <dd class="provvisorio" style="margin:0;">{LOREM_BREVE}</dd>
-      <dt>Provenienza / periodo</dt>
-      <dd class="provvisorio" style="margin:0;">{LOREM_BREVE}</dd>
-      <dt>Note tecniche</dt>
-      <dd class="provvisorio" style="margin:0;">{LOREM_BREVE}</dd>
-    </dl>
+    <div id="dyn-item"></div>
   </article>
-
-  <div class="nav-item">
-    {nav_prev}
-    {nav_next}
-  </div>
-
+  <div class="nav-item">{nav_prev}{nav_next}</div>
   <div class="blocco-qr">
     <div class="qr-riquadro" id="qr-pagina"></div>
-    <div class="qr-testo">
-      <strong>QR di questo oggetto</strong>
-      Da stampare ed esporre accanto al reperto in vetrina.
-    </div>
+    <div class="qr-testo"><strong>QR di questo oggetto</strong>Da esporre accanto al reperto in vetrina.</div>
   </div>
 """
-        bc = breadcrumb_html("../../", [
-            ("Home", "../../index.html"),
-            (s['titolo'], "index.html"),
-            (f"{s['prefisso_item']} {num}", None),
-        ])
-        html = base_page(
-            title=f"{s['prefisso_item']} {num}",
-            breadcrumb=bc,
-            active_slug=slug,
-            depth="../../",
-            content=content,
-            extra_head=HEAD_EXTRA,
-        )
-        write(f"esposizioni/{slug}/item-{num}.html", inject_qr(html))
+        bc = breadcrumb_html("../../", [("Home", "../../index.html"), (s['titolo'], "index.html"), (f"Scheda {num}", None)])
+        write(f"esposizioni/{slug}/item-{num}.html", base_page(
+            title=f"{s['prefisso_item']} {num}", breadcrumb=bc, active_slug=slug, depth="../../",
+            body_inner=body, page_type="item",
+            content_url=f"../../content/esposizioni/{slug}/item-{num}.json",
+        ))
 
-# ---------------------------------------------------------------------------
-# 5) Sezione modello "_template" — per creare nuove esposizioni (es. sequestri)
-# ---------------------------------------------------------------------------
-tpl_readme = """MODELLO PER UNA NUOVA SEZIONE ESPOSITIVA
-==========================================
-
-Per aggiungere una nuova esposizione (es. "Oggetti sequestrati"):
-
-1. Copiare l'intera cartella "esposizioni/_template" e rinominarla con
-   lo slug della nuova sezione (es. "esposizioni/sequestri").
-2. Aprire "index.html" nella nuova cartella e aggiornare:
-   - il tag <title> e il testo dell'intestazione (h1)
-   - l'elenco puntato "Oggetti in esposizione", con un <li> per ogni
-     scheda-oggetto che si vuole creare
-3. Copiare "item-01.html" tante volte quanti sono gli oggetti della
-   sezione, rinominando in item-02.html, item-03.html, ecc., e
-   aggiornare i link "Oggetto precedente / Oggetto successivo".
-4. Aggiungere la nuova sezione al menu di navigazione: aprire ogni
-   pagina del sito (o, più semplicemente, rilanciare lo script
-   "genera_sito.py" dopo aver aggiunto la nuova voce all'elenco
-   SEZIONI presente in cima al file) in modo che il menu venga
-   rigenerato automaticamente ovunque.
-5. Ogni pagina mostra già in automatico, in fondo, il proprio codice
-   QR (generato dal proprio URL): basta stampare la pagina o
-   fotografare il riquadro per ottenere il codice da affiggere in
-   vetrina.
-
-In alternativa, il modo più semplice e coerente è aggiungere la nuova
-sezione all'elenco SEZIONI in "genera_sito.py" e rilanciare lo script:
-tutte le pagine (indice, schede oggetto, menu di navigazione su TUTTO
-il sito) vengono create/aggiornate automaticamente.
-"""
-write("esposizioni/_template/LEGGIMI.txt", tpl_readme)
-
-s = {"slug": "_template", "titolo": "Nuova esposizione (modello)",
-     "sottotitolo": "Copiare questa cartella per creare una nuova sezione", "n_item": 1,
-     "prefisso_item": "Oggetto"}
-
-content_tpl_index = f"""
-  <a class="link-indietro" href="../../index.html">&larr; Torna alla pagina principale</a>
-  <section class="hero">
-    <p class="eyebrow">Modello di sezione</p>
-    <h1>{s['titolo']}</h1>
-    <p class="provvisorio">{LOREM}</p>
-  </section>
-
-  <p class="provvisorio">
-    Questa cartella non compare nel menu del sito: è un modello da copiare
-    per creare nuove sezioni espositive (vedi file LEGGIMI.txt in questa
-    stessa cartella). Il modo consigliato resta comunque aggiungere la
-    nuova sezione allo script "genera_sito.py" e rilanciarlo.
-  </p>
-
-  <h2>Oggetti in esposizione (1)</h2>
-  <ul class="elenco-item">
-    <li>
-      <span class="num">Oggetto 01</span>
-      <a href="item-01.html">Oggetto 01 — <span class="provvisorio-inline">titolo da definire</span></a>
-    </li>
-  </ul>
-"""
-bc = breadcrumb_html("../../", [("Home", "../../index.html"), (s['titolo'], None)])
-html = base_page(
-    title=s['titolo'], breadcrumb=bc, active_slug="", depth="../../",
-    content=content_tpl_index, extra_head=HEAD_EXTRA,
-)
-write("esposizioni/_template/index.html", inject_qr(html))
-
-content_tpl_item = f"""
-  <a class="link-indietro" href="index.html">&larr; Torna a "{s['titolo']}"</a>
-  <article class="scheda-oggetto">
-    <p class="etichetta">{s['titolo']} — scheda 01 di 01</p>
-    <h1>Oggetto 01 — <span class="provvisorio-inline">titolo da definire</span></h1>
-    <div class="placeholder-img">Immagine segnaposto — Oggetto 01</div>
-    <p class="provvisorio">{LOREM}</p>
-    <dl class="campi-scheda">
-      <dt>Descrizione</dt>
-      <dd class="provvisorio" style="margin:0;">{LOREM_BREVE}</dd>
-      <dt>Provenienza / periodo</dt>
-      <dd class="provvisorio" style="margin:0;">{LOREM_BREVE}</dd>
-      <dt>Note tecniche</dt>
-      <dd class="provvisorio" style="margin:0;">{LOREM_BREVE}</dd>
-    </dl>
-  </article>
-
-  <div class="nav-item">
-    <span class="disabilitato">&larr; Oggetto precedente</span>
-    <span class="disabilitato">Oggetto successivo &rarr;</span>
-  </div>
-"""
-bc = breadcrumb_html("../../", [("Home", "../../index.html"), (s['titolo'], "index.html"), ("Oggetto 01", None)])
-html = base_page(
-    title="Oggetto 01", breadcrumb=bc, active_slug="", depth="../../",
-    content=content_tpl_item, extra_head=HEAD_EXTRA,
-)
-write("esposizioni/_template/item-01.html", inject_qr(html))
-
-print("\nGenerazione completata.")
+print("\nPagine e contenuti generati.")

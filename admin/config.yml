@@ -1,0 +1,281 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Le immagini caricate dall'editor vengono salvate qui nel repository
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+# I contenuti pubblicati sono visibili a tutti senza login;
+# solo l'accesso a /admin per MODIFICARE richiede l'accesso Netlify Identity.
+publish_mode: simple
+
+collections:
+
+  - name: "home"
+    label: "Pagina principale"
+    files:
+      - label: "Pagina principale"
+        name: "home"
+        file: "content/home.json"
+        fields:
+          - {label: "Titolo del sito", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+
+  - name: "storia"
+    label: "Pagine di storia"
+    files:
+      - label: "Storia del fabbricato"
+        name: "storia-fabbricato"
+        file: "content/pages/storia-fabbricato.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Testo", name: "body", widget: "markdown"}
+      - label: "Storia della Dogana"
+        name: "storia-dogana"
+        file: "content/pages/storia-dogana.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Testo", name: "body", widget: "markdown"}
+
+  - name: "sigilli"
+    label: "Sigilli doganali"
+    files:
+      - label: "Sigilli doganali — testo generale"
+        name: "sigilli-index"
+        file: "content/esposizioni/sigilli/index.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+      - label: "Sigillo 01"
+        name: "sigilli-item-01"
+        file: "content/esposizioni/sigilli/item-01.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Sigillo 02"
+        name: "sigilli-item-02"
+        file: "content/esposizioni/sigilli/item-02.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Sigillo 03"
+        name: "sigilli-item-03"
+        file: "content/esposizioni/sigilli/item-03.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Sigillo 04"
+        name: "sigilli-item-04"
+        file: "content/esposizioni/sigilli/item-04.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Sigillo 05"
+        name: "sigilli-item-05"
+        file: "content/esposizioni/sigilli/item-05.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Sigillo 06"
+        name: "sigilli-item-06"
+        file: "content/esposizioni/sigilli/item-06.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+
+  - name: "strumenti"
+    label: "Strumenti di accertamento"
+    files:
+      - label: "Strumenti di accertamento — testo generale"
+        name: "strumenti-index"
+        file: "content/esposizioni/strumenti/index.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+      - label: "Strumento 01"
+        name: "strumenti-item-01"
+        file: "content/esposizioni/strumenti/item-01.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Strumento 02"
+        name: "strumenti-item-02"
+        file: "content/esposizioni/strumenti/item-02.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Strumento 03"
+        name: "strumenti-item-03"
+        file: "content/esposizioni/strumenti/item-03.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Strumento 04"
+        name: "strumenti-item-04"
+        file: "content/esposizioni/strumenti/item-04.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Strumento 05"
+        name: "strumenti-item-05"
+        file: "content/esposizioni/strumenti/item-05.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+
+  - name: "contrassegni"
+    label: "Contrassegni di Stato"
+    files:
+      - label: "Contrassegni di Stato — testo generale"
+        name: "contrassegni-index"
+        file: "content/esposizioni/contrassegni/index.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+      - label: "Contrassegno 01"
+        name: "contrassegni-item-01"
+        file: "content/esposizioni/contrassegni/item-01.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Contrassegno 02"
+        name: "contrassegni-item-02"
+        file: "content/esposizioni/contrassegni/item-02.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Contrassegno 03"
+        name: "contrassegni-item-03"
+        file: "content/esposizioni/contrassegni/item-03.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+
+  - name: "campioni"
+    label: "Campioni di merce"
+    files:
+      - label: "Campioni di merce — testo generale"
+        name: "campioni-index"
+        file: "content/esposizioni/campioni/index.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+      - label: "Campione 01"
+        name: "campioni-item-01"
+        file: "content/esposizioni/campioni/item-01.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Campione 02"
+        name: "campioni-item-02"
+        file: "content/esposizioni/campioni/item-02.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Campione 03"
+        name: "campioni-item-03"
+        file: "content/esposizioni/campioni/item-03.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+
+  - name: "registri"
+    label: "Registri e stampati doganali"
+    files:
+      - label: "Registri e stampati doganali — testo generale"
+        name: "registri-index"
+        file: "content/esposizioni/registri/index.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+      - label: "Registro 01"
+        name: "registri-item-01"
+        file: "content/esposizioni/registri/item-01.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+      - label: "Registro 02"
+        name: "registri-item-02"
+        file: "content/esposizioni/registri/item-02.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}
+
+  - name: "sicurezza"
+    label: "Attrezzature di sicurezza"
+    files:
+      - label: "Attrezzature di sicurezza — testo generale"
+        name: "sicurezza-index"
+        file: "content/esposizioni/sicurezza/index.json"
+        fields:
+          - {label: "Titolo", name: "title", widget: "string"}
+          - {label: "Testo introduttivo", name: "intro", widget: "markdown"}
+      - label: "Attrezzatura 01"
+        name: "sicurezza-item-01"
+        file: "content/esposizioni/sicurezza/item-01.json"
+        fields:
+          - {label: "Titolo oggetto", name: "title", widget: "string"}
+          - {label: "Immagine", name: "image", widget: "image", required: false}
+          - {label: "Descrizione", name: "description", widget: "markdown"}
+          - {label: "Provenienza / periodo", name: "provenienza", widget: "string", required: false}
+          - {label: "Note tecniche", name: "note", widget: "markdown", required: false}

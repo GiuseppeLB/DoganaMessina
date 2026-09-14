@@ -1,0 +1,5 @@
+[build]
+  publish = "."
+
+# Nessun comando di build necessario: il sito è già HTML/CSS/JS statico.
+# Netlify pubblica direttamente i file presenti nel repository.

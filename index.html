@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pagina principale — Museo della Dogana di Messina</title>
-<meta name="description" content="Museo della Dogana di Messina: esposizione di strumenti e attrezzature tecniche.">
+<title>Pagina principale — Le vie dei tesori - La Dogana di Messina</title>
+<meta name="description" content="Le vie dei tesori - La Dogana di Messina: esposizione di strumenti e attrezzature tecniche.">
 <link rel="stylesheet" href="css/style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/11.1.1/marked.min.js"></script>
 </head>
 <body>
 
@@ -15,7 +16,7 @@
     <a class="brand" href="index.html">
       <span class="stemma">MD</span>
       <span class="brand-text">
-        <span class="titolo">Museo della Dogana di Messina</span>
+        <span class="titolo">Le vie dei tesori - La Dogana di Messina</span>
         <span class="sottotitolo">Agenzia delle Dogane e dei Monopoli</span>
       </span>
     </a>
@@ -42,11 +43,7 @@
 <main>
   
   
-  <section class="hero">
-    <p class="eyebrow">Esposizione permanente</p>
-    <h1>Museo della Dogana di Messina</h1>
-    <p class="provvisorio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-  </section>
+  <section class="hero" id="dyn-home"></section>
 
   <section>
     <h2>Storia</h2>
@@ -54,12 +51,10 @@
       
     <div class="scheda">
       <a class="titolo-scheda" href="pages/storia-fabbricato.html">Storia del fabbricato</a>
-      <p class="desc">La sede storica della Dogana di Messina</p>
     </div>
 
     <div class="scheda">
       <a class="titolo-scheda" href="pages/storia-dogana.html">Storia della Dogana</a>
-      <p class="desc">Le origini e l'evoluzione dell'ufficio doganale</p>
     </div>
     </div>
   </section>
@@ -67,8 +62,7 @@
   <section style="margin-top:2rem;">
     <h2>Esposizioni</h2>
     <p class="desc" style="color:var(--testo-tenue);font-size:.88rem;margin-bottom:.4rem;">
-      Ogni sezione è accessibile direttamente tramite il codice QR affisso
-      presso la relativa vetrina, oppure dal menu di navigazione.
+      Ogni sezione è accessibile anche tramite il codice QR affisso presso la relativa vetrina.
     </p>
     <div class="griglia-sezioni">
       
@@ -77,26 +71,31 @@
       <p class="desc">Piombi, sigilli, lucchetti e laminette</p>
       <span class="conteggio">6 oggetti in esposizione</span>
     </div>
+
     <div class="scheda">
       <a class="titolo-scheda" href="esposizioni/strumenti/index.html">Strumenti di accertamento</a>
       <p class="desc">Alcolometri, densimetri, bicchieri di campionamento</p>
       <span class="conteggio">5 oggetti in esposizione</span>
     </div>
+
     <div class="scheda">
       <a class="titolo-scheda" href="esposizioni/contrassegni/index.html">Contrassegni di Stato</a>
       <p class="desc">Contrassegni e bolli di Stato</p>
       <span class="conteggio">3 oggetti in esposizione</span>
     </div>
+
     <div class="scheda">
       <a class="titolo-scheda" href="esposizioni/campioni/index.html">Campioni di merce</a>
       <p class="desc">Lattine di gasolio, alcol e prodotti vari</p>
       <span class="conteggio">3 oggetti in esposizione</span>
     </div>
+
     <div class="scheda">
       <a class="titolo-scheda" href="esposizioni/registri/index.html">Registri e stampati doganali</a>
       <p class="desc">Registri, bollettari e modulistica storica</p>
       <span class="conteggio">2 oggetti in esposizione</span>
     </div>
+
     <div class="scheda">
       <a class="titolo-scheda" href="esposizioni/sicurezza/index.html">Attrezzature di sicurezza</a>
       <p class="desc">Maschere antigas e dotazioni di protezione</p>
@@ -107,20 +106,23 @@
 
   <div class="blocco-qr">
     <div class="qr-riquadro" id="qr-pagina"></div>
-    <div class="qr-testo">
-      <strong>QR di questa pagina</strong>
-      Inquadra per riaprire la pagina principale da smartphone.
-    </div>
+    <div class="qr-testo"><strong>QR di questa pagina</strong>Inquadra per riaprire la pagina principale.</div>
   </div>
 
 </main>
 
 <footer class="site-footer">
-  <p>Museo della Dogana di Messina — Agenzia delle Dogane e dei Monopoli</p>
-  <p>Contenuti in fase di redazione. Struttura del sito generata automaticamente.</p>
+  <p>Le vie dei tesori - La Dogana di Messina — Agenzia delle Dogane e dei Monopoli</p>
+  <p>Contenuti gestiti tramite pannello di amministrazione.</p>
 </footer>
 
+<script>
+  var PAGE_TYPE = "home";
+  var CONTENT_URL = "content/home.json";
+  
+</script>
 <script src="js/main.js"></script>
+<script src="js/render.js"></script>
 
 <script>
   (function(){
@@ -128,13 +130,12 @@
     if(!el || typeof QRCode === 'undefined') return;
     new QRCode(el, {
       text: window.location.href,
-      width: 120,
-      height: 120,
-      colorDark: "#12213a",
-      colorLight: "#ffffff",
+      width: 120, height: 120,
+      colorDark: "#12213a", colorLight: "#ffffff",
       correctLevel: QRCode.CorrectLevel.M
     });
   })();
 </script>
+
 </body>
 </html>
