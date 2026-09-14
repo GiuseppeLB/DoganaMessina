@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="https://github.com/GiuseppeLB/DoganaMessina/sitemap.xsl"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url>
+<loc>https://github.com/GiuseppeLB/DoganaMessina/</loc>
+</url>
+<url>
+<loc>https://github.com/GiuseppeLB/DoganaMessina/registri.html</loc>
+<lastmod>2026-09-13T18:08:55+02:00</lastmod>
+</url>
+<url>
+<loc>https://github.com/GiuseppeLB/DoganaMessina/sicurezza-sul-lavoro.html</loc>
+<lastmod>2026-09-13T18:09:32+02:00</lastmod>
+</url>
+<url>
+<loc>https://github.com/GiuseppeLB/DoganaMessina/sigilli-doganali.html</loc>
+<lastmod>2026-09-13T18:08:32+02:00</lastmod>
+</url>
+<url>
+<loc>https://github.com/GiuseppeLB/DoganaMessina/strumenti-di-accertamento.html</loc>
+<lastmod>2026-09-13T18:09:14+02:00</lastmod>
+</url>
+</urlset>
