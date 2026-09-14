@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campione 01 — Museo della Dogana di Messina</title>
+<meta name="description" content="Museo della Dogana di Messina: esposizione di strumenti e attrezzature tecniche.">
+<link rel="stylesheet" href="../../css/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="../../index.html">
+      <span class="stemma">MD</span>
+      <span class="brand-text">
+        <span class="titolo">Museo della Dogana di Messina</span>
+        <span class="sottotitolo">Agenzia delle Dogane e dei Monopoli</span>
+      </span>
+    </a>
+    <button class="menu-btn" id="menu-btn" aria-label="Apri menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </div>
+  <nav class="site-nav" id="site-nav">
+    <ul>
+      <li><a href="../../index.html">Pagina principale</a></li>
+      <li><a href="../../pages/storia-fabbricato.html">Storia del fabbricato</a></li>
+      <li><a href="../../pages/storia-dogana.html">Storia della Dogana</a></li>
+      <li><a href="#" class="sotto" style="pointer-events:none;color:#c99a5c;">Esposizioni</a></li>
+      <li class="sotto"><a href="../../esposizioni/sigilli/index.html">Sigilli doganali</a></li>
+      <li class="sotto"><a href="../../esposizioni/strumenti/index.html">Strumenti di accertamento</a></li>
+      <li class="sotto"><a href="../../esposizioni/contrassegni/index.html">Contrassegni di Stato</a></li>
+      <li class="sotto"><a href="../../esposizioni/campioni/index.html" class="attivo">Campioni di merce</a></li>
+      <li class="sotto"><a href="../../esposizioni/registri/index.html">Registri e stampati doganali</a></li>
+      <li class="sotto"><a href="../../esposizioni/sicurezza/index.html">Attrezzature di sicurezza</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <p class="breadcrumb"><a href="../../index.html">Home</a> &rsaquo; <a href="index.html">Campioni di merce</a> &rsaquo; Campione 01</p>
+  
+  <a class="link-indietro" href="index.html">&larr; Torna a "Campioni di merce"</a>
+  <article class="scheda-oggetto">
+    <p class="etichetta">Campioni di merce — scheda 01 di 03</p>
+    <h1>Campione 01 — <span class="provvisorio-inline">titolo da definire</span></h1>
+
+    <div class="placeholder-img">Immagine segnaposto — Campione 01</div>
+
+    <p class="provvisorio">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+
+    <dl class="campi-scheda">
+      <dt>Descrizione</dt>
+      <dd class="provvisorio" style="margin:0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+      <dt>Provenienza / periodo</dt>
+      <dd class="provvisorio" style="margin:0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+      <dt>Note tecniche</dt>
+      <dd class="provvisorio" style="margin:0;">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</dd>
+    </dl>
+  </article>
+
+  <div class="nav-item">
+    <span class="disabilitato">&larr; Oggetto precedente</span>
+    <a href="item-02.html">Oggetto successivo &rarr;</a>
+  </div>
+
+  <div class="blocco-qr">
+    <div class="qr-riquadro" id="qr-pagina"></div>
+    <div class="qr-testo">
+      <strong>QR di questo oggetto</strong>
+      Da stampare ed esporre accanto al reperto in vetrina.
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <p>Museo della Dogana di Messina — Agenzia delle Dogane e dei Monopoli</p>
+  <p>Contenuti in fase di redazione. Struttura del sito generata automaticamente.</p>
+</footer>
+
+<script src="../../js/main.js"></script>
+
+<script>
+  (function(){
+    var el = document.getElementById('qr-pagina');
+    if(!el || typeof QRCode === 'undefined') return;
+    new QRCode(el, {
+      text: window.location.href,
+      width: 120,
+      height: 120,
+      colorDark: "#12213a",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  })();
+</script>
+</body>
+</html>

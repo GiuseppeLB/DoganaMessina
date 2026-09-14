@@ -1,0 +1,28 @@
+MODELLO PER UNA NUOVA SEZIONE ESPOSITIVA
+==========================================
+
+Per aggiungere una nuova esposizione (es. "Oggetti sequestrati"):
+
+1. Copiare l'intera cartella "esposizioni/_template" e rinominarla con
+   lo slug della nuova sezione (es. "esposizioni/sequestri").
+2. Aprire "index.html" nella nuova cartella e aggiornare:
+   - il tag <title> e il testo dell'intestazione (h1)
+   - l'elenco puntato "Oggetti in esposizione", con un <li> per ogni
+     scheda-oggetto che si vuole creare
+3. Copiare "item-01.html" tante volte quanti sono gli oggetti della
+   sezione, rinominando in item-02.html, item-03.html, ecc., e
+   aggiornare i link "Oggetto precedente / Oggetto successivo".
+4. Aggiungere la nuova sezione al menu di navigazione: aprire ogni
+   pagina del sito (o, più semplicemente, rilanciare lo script
+   "genera_sito.py" dopo aver aggiunto la nuova voce all'elenco
+   SEZIONI presente in cima al file) in modo che il menu venga
+   rigenerato automaticamente ovunque.
+5. Ogni pagina mostra già in automatico, in fondo, il proprio codice
+   QR (generato dal proprio URL): basta stampare la pagina o
+   fotografare il riquadro per ottenere il codice da affiggere in
+   vetrina.
+
+In alternativa, il modo più semplice e coerente è aggiungere la nuova
+sezione all'elenco SEZIONI in "genera_sito.py" e rilanciare lo script:
+tutte le pagine (indice, schede oggetto, menu di navigazione su TUTTO
+il sito) vengono create/aggiornate automaticamente.
